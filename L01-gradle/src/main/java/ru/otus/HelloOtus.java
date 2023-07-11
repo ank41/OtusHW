@@ -4,7 +4,7 @@
 package ru.otus;
 
 import com.google.common.collect.Lists;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -14,15 +14,15 @@ import java.util.List;
  * <p>To unzip the jar: unzip -l L01-gradle.jar unzip -l gradleHelloWorld-0.1.jar
  */
 @SuppressWarnings("java:S106")
-public class App {
+public class HelloOtus {
     public static void main(String... args) {
-        List<Integer> example = new ArrayList<>();
-        int min = 0;
-        int max = 100;
-        for (int i = min; i < max; i++) {
-            example.add(i);
-        }
 
-        System.out.println(Lists.reverse(example));
+        List<Character> myList = Arrays.asList('H', 'E', 'L', 'L', 'O', 'G', 'E', 'E', 'K', 'S');
+
+        List<List<Character>> lists = Lists.partition(myList, 3);
+
+        for (List<Character> sublist : lists) {
+            System.out.println(sublist);
+        }
     }
 }
