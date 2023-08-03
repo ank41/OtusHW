@@ -21,15 +21,8 @@ public class CustomerService {
 
     public Map.Entry<Customer, String> getNext(Customer customer) {
         Map.Entry<Customer, String> result = map.higherEntry(customer);
-        if (result == null) {
-            Iterator<Map.Entry<Customer, String>> iterator = map.entrySet().iterator();
-            while (iterator.hasNext()) {
-                if (customer.equals(iterator.next().getKey())) {
-                    return iterator.hasNext() ? iterator.next() : null;
-                }
-            }
-        }
-        return result;
+        return result != null ? Map.entry(new Customer(result.getKey()), result.getValue()) : null;
+
     }
 
     public void add(Customer customer, String data) {
