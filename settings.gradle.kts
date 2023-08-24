@@ -2,7 +2,8 @@ rootProject.name = "OtusHW"
 include("L01-gradle")
 
 include("hw02-collections")
-
+include("hw03-reflection")
+include("hw05-aop")
 
 pluginManagement {
     val jgitver: String by settings
@@ -25,4 +26,4 @@ pluginManagement {
         id("com.diffplug.spotless") version spotless
     }
 }
-include("hw03-reflection")
+
