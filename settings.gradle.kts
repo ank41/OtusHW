@@ -2,6 +2,8 @@ rootProject.name = "OtusHW"
 include("L01-gradle")
 
 include("hw02-collections")
+include("hw03-reflection")
+include("hw04-gc")
 
 
 pluginManagement {
@@ -25,4 +27,4 @@ pluginManagement {
         id("com.diffplug.spotless") version spotless
     }
 }
-include("hw03-reflection")
+
