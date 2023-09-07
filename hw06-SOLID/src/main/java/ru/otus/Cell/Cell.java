@@ -15,9 +15,6 @@ public abstract class Cell {
 
     public abstract int getNumberOfBanknotes();
 
-     public int getDenominate(){
-     return banknote.getDenomination();
-    }
 
      public Banknote getBanknoteType(){
         return banknote;

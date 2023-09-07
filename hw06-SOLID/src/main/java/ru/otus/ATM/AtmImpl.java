@@ -3,27 +3,34 @@ package ru.otus.ATM;
 import ru.otus.Banknote;
 import ru.otus.Cell.AtmCell;
 import ru.otus.Cell.Cell;
+import ru.otus.MoneyRules.MoneyRulesChecker;
 
 import java.util.*;
 
 
 public class AtmImpl implements Atm {
 
-    private final List<Cell> cells = new ArrayList<>();
-    private int balance = 0;
+    private final Set<Cell> cellsTreeSet = new TreeSet<>((o1, o2) -> {
+        var denO1 = o1.getBanknoteType().getDenomination();
+        var denO2 = o2.getBanknoteType().getDenomination();
+        return Integer.compare(denO2, denO1);
+    });
+    private final MoneyRulesChecker moneyRulesChecker;
 
-    public AtmImpl(Banknote[] banknotes) {
+    public AtmImpl(List<Banknote> banknotes, MoneyRulesChecker moneyRulesChecker) {
         for (var banknote : banknotes) {
-            cells.add(new AtmCell(banknote));
+            cellsTreeSet.add(new AtmCell(banknote));
         }
+        this.moneyRulesChecker = moneyRulesChecker;
     }
 
     @Override
     public Map<Banknote, Integer> getMoney(int amount) {
-        if (amount % 100 != 0) {
-            throw new IllegalArgumentException("Сумма " + amount + " рублей не может быть выдана. Введите сумму, кратную 100");
+        var balance = getBalance();
+        if (!moneyRulesChecker.checkAmountFormat(amount)) {
+            throw new IllegalArgumentException("Сумма " + amount + " рублей не может быть выдана. Введите сумму, кратную " + moneyRulesChecker.getMinDenomination());
         }
-        if (balance < amount) {
+        if (!moneyRulesChecker.CheckBalance(amount, balance)) {
             throw new IllegalArgumentException("Сумма " + amount + " рублей не может быть выдана.");
         }
 
@@ -32,14 +39,17 @@ public class AtmImpl implements Atm {
 
     @Override
     public void addMoney(Map<Banknote, Integer> banknotes) {
-        final int amount = processAdd(banknotes);
-        balance += amount;
-
+        checkCorrectNumbersBanknotes(banknotes);
+        processAdd(banknotes);
     }
 
     @Override
     public int getBalance() {
-        return balance;
+        int result = 0;
+        for (Cell cell : cellsTreeSet) {
+            result += sumBanknotes(cell.getBanknoteType().getDenomination(), cell.getNumberOfBanknotes());
+        }
+        return result;
     }
 
     private Map<Banknote, Integer> findingMoney(int amount) {
@@ -48,9 +58,9 @@ public class AtmImpl implements Atm {
         int sum = 0;
         int requiredAmount = amount;
 
-        for (var cell : cells) {
+        for (var cell : cellsTreeSet) {
 
-            var denomination = cell.getDenominate();
+            var denomination = cell.getBanknoteType().getDenomination();
             var numberBanknotes = cell.getNumberOfBanknotes();
 
             if (requiredAmount >= denomination && numberBanknotes != 0) {
@@ -62,8 +72,7 @@ public class AtmImpl implements Atm {
             }
         }
 
-        if (sum == amount) {
-            balance -= amount;
+        if (moneyRulesChecker.checkPayoutAmount(amount, sum)) {
             return result;
         } else {
             addMoney(result);
@@ -72,20 +81,30 @@ public class AtmImpl implements Atm {
     }
 
 
-    private int processAdd(Map<Banknote, Integer> banknotes) {
-        int result = 0;
+    private void processAdd(Map<Banknote, Integer> banknotes) {
 
-        for (Cell cell : cells) {
+        for (Cell cell : cellsTreeSet) {
             if (banknotes.containsKey(cell.getBanknoteType())) {
-                result += sumBanknotes(cell.getDenominate(), cell.addBanknotes(banknotes.get(cell.getBanknoteType())));
-
+                cell.addBanknotes(banknotes.get(cell.getBanknoteType()));
             }
         }
-        return result;
+
     }
 
     private int sumBanknotes(int denomination, int number) {
         return denomination * number;
     }
+
+    private void checkCorrectNumbersBanknotes(Map<Banknote, Integer> banknotes) {
+        for (Cell cell : cellsTreeSet) {
+            if (banknotes.containsKey(cell.getBanknoteType())) {
+                if (!moneyRulesChecker.checkNumbersOfBanknotes(banknotes.get(cell.getBanknoteType()))) {
+                    throw new IllegalArgumentException("Отрицательное число банкнот номиналом " + cell.getBanknoteType().getDenomination());
+                }
+            }
+        }
+
+    }
+
 
 }

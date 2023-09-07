@@ -5,7 +5,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.otus.ATM.Atm;
 import ru.otus.ATM.AtmImpl;
+import ru.otus.MoneyRules.MoneyRulesCheckerATM;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,16 +19,17 @@ public class TestATM {
 
     @BeforeEach
     void preparationATM() {
-        atm = new AtmImpl(Banknote.values());
+        atm = new AtmImpl(Arrays.asList(Banknote.values()), new MoneyRulesCheckerATM(100));
     }
+
     private static void fillingATM() {
         //95 000 рублей
         atm.addMoney(Map.of(
                 HUNDRED, 100,
-                TWO_HUNDRED, 100,
-                FIVE_HUNDRED, 10,
                 THOUSAND, 10,
-                FIVE_THOUSAND, 10));
+                FIVE_THOUSAND, 10,
+                TWO_HUNDRED, 100,
+                FIVE_HUNDRED, 10));
     }
 
     @Test
@@ -34,6 +37,13 @@ public class TestATM {
         //пытаемся снять деньги с 0 баланса
         RuntimeException fail = Assertions.assertThrows(IllegalArgumentException.class, () -> atm.getMoney(1000));
         Assertions.assertEquals("Сумма " + 1000 + " рублей не может быть выдана.", fail.getMessage());
+    }
+
+
+    @Test
+    void testNegativeAdding() {
+        //пытаемся добавить отрицательное число купюр
+        Assertions.assertThrows(IllegalArgumentException.class, () -> atm.addMoney(Map.of(HUNDRED, -10)));
     }
 
     @Test
@@ -47,6 +57,18 @@ public class TestATM {
     void testAdding() {
         fillingATM();
         Assertions.assertEquals(95000, atm.getBalance());
+    }
+
+
+    @Test
+    void testReverseAddingAndGetMoney() {
+        Map<Banknote, Integer> expectedResult = new HashMap<>(Map.of(
+                HUNDRED, 2,
+                THOUSAND, 1
+        ));
+        atm.addMoney(expectedResult);
+        Assertions.assertEquals(expectedResult, atm.getMoney(1200));
+        Assertions.assertEquals(0, atm.getBalance());
     }
 
     @Test

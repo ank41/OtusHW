@@ -35,10 +35,6 @@ public class AtmCell extends Cell {
         return number;
     }
 
-    @Override
-    public int getDenominate() {
-        return super.getDenominate();
-    }
 
     @Override
     public Banknote getBanknoteType() {
