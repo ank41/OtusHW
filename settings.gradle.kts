@@ -5,7 +5,8 @@ include("hw02-collections")
 include("hw03-reflection")
 include("hw04-gc")
 include("hw05-aop")
-
+include("hw06-SOLID")
+include("hw07-patterns")
 
 
 
