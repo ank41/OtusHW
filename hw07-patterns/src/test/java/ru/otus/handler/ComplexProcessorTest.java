@@ -2,19 +2,25 @@ package ru.otus.handler;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import ru.otus.listener.Listener;
 import ru.otus.model.Message;
 import ru.otus.processor.Processor;
+import ru.otus.processor.homework.NowTimeImpl;
+import ru.otus.processor.homework.ProcessorExceptionAtEvenSecond;
 
 class ComplexProcessorTest {
 
@@ -32,7 +38,8 @@ class ComplexProcessorTest {
 
         var processors = List.of(processor1, processor2);
 
-        var complexProcessor = new ComplexProcessor(processors, (ex) -> {});
+        var complexProcessor = new ComplexProcessor(processors, (ex) -> {
+        });
 
         // when
         var result = complexProcessor.handle(message);
@@ -81,7 +88,8 @@ class ComplexProcessorTest {
 
         var listener = mock(Listener.class);
 
-        var complexProcessor = new ComplexProcessor(new ArrayList<>(), (ex) -> {});
+        var complexProcessor = new ComplexProcessor(new ArrayList<>(), (ex) -> {
+        });
 
         complexProcessor.addListener(listener);
 
@@ -92,6 +100,23 @@ class ComplexProcessorTest {
 
         // then
         verify(listener, times(1)).onUpdated(message);
+    }
+
+    @Test
+    @DisplayName("Тестируем выбрасывание exception только по четным секундам")
+    void evenSecondsExceptionProcessorTest() {
+        var message = new Message.Builder(1L).field1("field1").build();
+
+        var evenNowTime = mock(NowTimeImpl.class);
+        when(evenNowTime.now()).thenReturn(LocalDateTime.MIN);
+        var alwaysEven = new ProcessorExceptionAtEvenSecond(evenNowTime);
+        assertThrows(RuntimeException.class, () -> alwaysEven.process(message));
+
+
+        var oddNowTime = mock(NowTimeImpl.class);
+        when(oddNowTime.now()).thenReturn(LocalDateTime.MAX);
+        var alwaysOdd = new ProcessorExceptionAtEvenSecond(oddNowTime);
+        assertDoesNotThrow(() -> alwaysOdd.process(message));
     }
 
     private static class TestException extends RuntimeException {
