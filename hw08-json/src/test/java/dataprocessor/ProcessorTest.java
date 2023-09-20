@@ -8,7 +8,6 @@ import java.nio.file.Paths;
 
 import org.assertj.core.api.AssertionsForClassTypes;
 import org.assertj.core.api.AssertionsForInterfaceTypes;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -22,7 +21,6 @@ class ProcessorTest {
     // сам тест менять нельзя
 
     @Test
-    @Disabled("Чтобы прошел билд") // Эту аннотацию надо убрать
     @DisplayName("Из файла читается json, обрабатывается, результат сериализуется в строку")
     void processingTest(@TempDir Path tempDir) throws IOException {
         System.out.println(tempDir);
@@ -49,5 +47,6 @@ class ProcessorTest {
         var serializedOutput = Files.readString(Paths.get(fullOutputFilePath));
         // обратите внимание: важен порядок ключей
         AssertionsForClassTypes.assertThat(serializedOutput).isEqualTo("{\"val1\":3.0,\"val2\":30.0,\"val3\":33.0}");
+
     }
 }
