@@ -121,13 +121,12 @@ public class Client implements Cloneable {
             return false;
         }
         Client client = (Client) o;
-        return Objects.equals(id, client.id) && Objects.equals(address,
-                client.address) && Objects.equals(phoneList, client.phoneList);
+        return Objects.equals(id, client.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, address, phoneList);
+        return Objects.hash(id);
     }
 
     @Override
