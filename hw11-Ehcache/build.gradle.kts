@@ -5,7 +5,6 @@ plugins {
 group = "ru.otus"
 
 dependencies {
-    implementation("org.ehcache:ehcache")
 
     implementation("ch.qos.logback:logback-classic")
     implementation("org.hibernate.orm:hibernate-core")
@@ -13,7 +12,6 @@ dependencies {
 
     implementation("org.postgresql:postgresql")
 
-    testImplementation("com.h2database:h2")
     testImplementation("org.junit.jupiter:junit-jupiter-engine")
     testImplementation("org.junit.jupiter:junit-jupiter-params")
     testImplementation("org.assertj:assertj-core")
