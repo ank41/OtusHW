@@ -1,26 +1,31 @@
 package ru.otus.cachehw;
 
+
+import java.util.Map;
+import java.util.WeakHashMap;
+
 public class MyCache<K, V> implements HwCache<K, V> {
     // Надо реализовать эти методы
+    private final Map<K, V> cacheMap = new WeakHashMap<>();
 
     @Override
     public void put(K key, V value) {
-        throw new UnsupportedOperationException();
+        cacheMap.put(key, value);
     }
 
     @Override
     public void remove(K key) {
-        throw new UnsupportedOperationException();
+        cacheMap.remove(key);
     }
 
     @Override
     public V get(K key) {
-        throw new UnsupportedOperationException();
+        return cacheMap.get(key);
     }
 
     @Override
     public void addListener(HwListener<K, V> listener) {
-        throw new UnsupportedOperationException();
+       throw new UnsupportedOperationException();
     }
 
     @Override
