@@ -26,15 +26,19 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
     private void processConfig(Class<?> configClass) throws Exception {
         Object configClassInstance = configClass.getConstructor().newInstance();
 
-        List<Method> methods = Arrays.stream(configClass.getMethods()).filter(method -> method.isAnnotationPresent(AppComponent.class))
-                .sorted(Comparator.comparingInt(m -> m.getAnnotation(AppComponent.class).order())).toList();
+        List<Method> methods = Arrays.stream(configClass.getMethods())
+                .filter(
+                        method -> method.isAnnotationPresent(AppComponent.class))
+                .sorted(
+                        Comparator.comparingInt(m -> m.getAnnotation(AppComponent.class)
+                                .order()))
+                .toList();
 
-        String componentName;
-        Object component;
+
         for (Method method : methods) {
-            componentName = getComponentName(method);
+            var componentName = getComponentName(method);
             checkDuplicate(componentName);
-            component = method.invoke(configClassInstance, getArgs(method.getParameters()));
+            var component = method.invoke(configClassInstance, getArgs(method.getParameters()));
 
             appComponentsByName.put(componentName, component);
             appComponents.add(component);
@@ -45,7 +49,10 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
     @Override
     @SuppressWarnings("unchecked")
     public <C> C getAppComponent(Class<C> componentClass) {
-        List<Object> components = appComponents.stream().filter(component -> componentClass.isAssignableFrom(component.getClass())).toList();
+        List<Object> components = appComponents.stream()
+                .filter(
+                        component -> componentClass.isAssignableFrom(component.getClass()))
+                .toList();
         if (components.size() > 1) {
             throw new AppContainerException("getting component is present in container more then one instance");
         } else if (components.isEmpty()) {
@@ -57,7 +64,9 @@ public class AppComponentsContainerImpl implements AppComponentsContainer {
     @Override
     @SuppressWarnings("unchecked")
     public <C> C getAppComponent(String componentName) {
-        return (C) Optional.ofNullable(appComponentsByName.get(componentName)).orElseThrow(() -> new AppContainerException("getting component is absent in container"));
+        return (C) Optional.ofNullable(
+                        appComponentsByName.get(componentName))
+                .orElseThrow(() -> new AppContainerException("getting component is absent in container"));
     }
 
 
