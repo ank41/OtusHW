@@ -22,6 +22,9 @@ public class ClientDto {
         this.phones = client.getPhoneList().stream().map(Phone::getNumber).collect(Collectors.joining(", "));
     }
 
+    public ClientDto() {
+    }
+
     public Long getId() {
         return id;
     }

@@ -1,87 +1,27 @@
 package ru.otus.domain;
 
-import java.util.Objects;
-
-import static jakarta.persistence.CascadeType.ALL;
-import static jakarta.persistence.FetchType.LAZY;
-import static jakarta.persistence.GenerationType.SEQUENCE;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceCreator;
+import org.springframework.data.relational.core.mapping.Table;
 
 
-
-@Entity
 @Table(name = "address")
-public class Address implements Cloneable {
-
+public class Address{
     @Id
-    @SequenceGenerator(name = "address_gen", sequenceName = "address_seq",
-            initialValue = 1, allocationSize = 1)
-    @GeneratedValue(strategy = SEQUENCE, generator = "address_gen")
-    @Column(name = "id")
-    private Long id;
+    private final Long clientId;
+    private final String street;
 
-    @Column(name = "street")
-    private String street;
-
-    @OneToOne(mappedBy = "address", cascade = ALL, fetch = LAZY)
-    private Client client;
-
-    public Long getId() {
-        return id;
+    @PersistenceCreator
+    public Address(Long clientId, String street) {
+        this.clientId = clientId;
+        this.street = street;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Long getClientId() {
+        return clientId;
     }
 
     public String getStreet() {
         return street;
-    }
-
-    public void setStreet(String street) {
-        this.street = street;
-    }
-
-    public Client getClient() {
-        return client;
-    }
-
-    public void setClient(Client client) {
-        this.client = client;
-    }
-
-    public Address(){}
-    public Address(Long id, String street) {
-        this.id = id;
-        this.street = street;
-    }
-
-    @Override
-    public Address clone() {
-        return new Address(this.id, this.street);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Address address = (Address) o;
-        return Objects.equals(id, address.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
-    @Override
-    public String toString() {
-        return "Address{" +
-                "id=" + id +
-                ", street='" + street + '\'' +
-                '}';
     }
 }

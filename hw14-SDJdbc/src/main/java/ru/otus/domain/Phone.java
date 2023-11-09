@@ -1,75 +1,31 @@
 package ru.otus.domain;
 
-import java.util.Objects;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceCreator;
+import org.springframework.data.relational.core.mapping.Table;
 
-import static jakarta.persistence.GenerationType.SEQUENCE;
-
-
-@Entity
 @Table(name = "phone")
-public class Phone implements Cloneable {
+public class Phone  {
 
     @Id
-    @SequenceGenerator(name = "phone_gen", sequenceName = "phone_seq",
-            initialValue = 1, allocationSize = 1)
-    @GeneratedValue(strategy = SEQUENCE, generator = "phone_gen")
-    @Column(name = "id")
-    private Long id;
+    private final Long clientId;
+    private final String number;
 
-    @Column(name = "number")
-    private String number;
-
-    public Phone() {
+    public Phone(String number) {
+        this(null, number);
     }
 
-    public Phone(Long id, String street) {
-        this.id = id;
-        this.number = street;
+    @PersistenceCreator
+    public Phone(Long clientId, String number) {
+        this.clientId = clientId;
+        this.number = number;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    public Long getClientId() {
+        return clientId;
     }
 
     public String getNumber() {
         return number;
-    }
-
-    public void setNumber(String number) {
-        this.number = number;
-    }
-
-    @Override
-    public Phone clone() {
-        return new Phone(this.id, this.number);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Phone phone = (Phone) o;
-        return Objects.equals(id, phone.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
-    @Override
-    public String toString() {
-        return "Phone{" +
-                "id=" + id +
-                ", number='" + number + '\'' +
-                '}';
     }
 }
