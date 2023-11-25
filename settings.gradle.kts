@@ -16,6 +16,8 @@ include("hw12-web-server")
 include("hw13-DI")
 include("hw14-SDJdbc")
 
+include("hw15-Executors")
+
 pluginManagement {
     val jgitver: String by settings
     val dependencyManagement: String by settings
