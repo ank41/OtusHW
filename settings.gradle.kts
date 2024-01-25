@@ -18,6 +18,7 @@ include("hw14-SDJdbc")
 
 include("hw15-Executors")
 include("hw16-Queues")
+include("hw17-gRPC")
 
 pluginManagement {
     val jgitver: String by settings
